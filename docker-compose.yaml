@@ -1,0 +1,19 @@
+version: '3.9'
+
+networks:
+  vr-pharmacy-client-network:
+    name: vr-pharmacy-client-network
+    driver: bridge
+
+services:
+  vr-pharmacy-client:
+    build:
+      context: .
+      dockerfile: docker/image/Dockerfile
+      args:
+        REACT_APP_SERVER_ADDRESS: "http://51.250.38.136:8001/api/v1.0"
+    container_name: auth-client-storybook
+    restart: always
+    ports: ["8002:80"]
+    networks:
+      - vr-pharmacy-client-network

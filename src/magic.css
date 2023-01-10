@@ -1,0 +1,12 @@
+
+
+/* container for disabling scrollbar  */
+.noscroll {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* in case there`s pseudo-element "webkit-scrollbar" */
+.noscroll::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}

@@ -1,0 +1,49 @@
+
+Tasks:
+   
+1. group statistic, analysis - diagrams, ~ BI systems
+   - old TaskMap - can be used here
+
+2. prettier form - like clerc ~ onRowClick - window with student`s progress
+3. search and sort everywhere
+
+
+1.  POST /students 
+1.5 - where`s pswd for particular student?
+1.9 - created student setting pswd or using existing? 
+2.  some VR actions affecting serv`s DB
+3. 
+
+
+Tip:
+  1. "with": { relationships: ["col_name"]} - returns MUCH info about selected /endpoint occured with "colname" 
+        supported relations are visible in example_response/schema/data
+
+  2. Date transforming - easy with Date object 
+
+ 
+    useSelector() + useEffect(), useState() - a little
+
+    src: https://dmitripavlutin.com/react-useeffect-explanation/
+    WHY: useEffect(callback, dependencies) is the hook that manages the side-effects 
+
+    WHEN: useEffect(callback, dependencies) invokes the callback after initial mounting, and on later renderings,
+    if any value inside ----> dependencies has changed.
+
+    import { useEffect, useState } from 'react';
+    function FetchEmployees() {
+      const [employees, setEmployees] = useState([]);
+      useEffect(() => {
+        async function fetchEmployees() {
+          const response = await fetch('/employees');
+          const fetchedEmployees = await response.json(response);
+          setEmployees(fetchedEmployees);
+        }
+        fetchEmployees();
+      }, []);
+      return (
+        <div>
+          {employees.map(name => <div>{name}</div>)}
+        </div>
+      );
+    }
