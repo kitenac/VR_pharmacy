@@ -14,7 +14,7 @@ async function getData(setData, Params={params: {}, optional: {}}, groupID){
 export const ModStudentsPage = (props) => {
 
     // last column('') - for 'options' pic!
-    const columns = [{colName: '', poleName: ""}, {colName: 'ФИО', poleName: "full_name"}, {colName: '', poleName: ""}]
+    const columns = [{colName: '', poleName: ""}, {colName: 'ФИО', poleName: "full_name", sortable: true}, {colName: '', poleName: ""}]
 
     const {row} = useLocation().state
     const crumbs = useLocation().pathname.split('/')

@@ -46,10 +46,7 @@ async function API({url,
 }
 
 
-export async function getStudents({groupID, params=defaultParams, optional={search: '', sort: {col: '-full_name', direction: 'asc'} }}){
-    // handling emty initialized sort
-    if(optional.sort !== null) optional.sort = {col: '-full_name', direction: 'asc'}
-    const {col, direction} = optional.sort
+export async function getStudents({groupID, params=defaultParams, search='' }){
 
     const options = {  
         "filter":[ {
@@ -59,24 +56,21 @@ export async function getStudents({groupID, params=defaultParams, optional={sear
         ],
     }
 
-    if (optional.search !== '' && optional.search){ 
+    if (search !== '' && search){ 
         options["filter"] = [
         { 
             "column": 'full_name', 
             "operator": 'ilike', 
-            "value": '%' + optional.search + '%'
+            "value": '%' + search + '%'
         }]
     }
 
-    return await API({url: `students/search`, requestOptions: options, params: {...params, order: [col]}})
+    return await API({url: `students/search`, requestOptions: options, params: {...params}})
 }
 
 
-export async function getGroups({params=defaultParams, optional={search: '', sort: {col: '-name', direction: 'asc'} } }){
+export async function getGroups({params=defaultParams, search='' }){
     
-    if(optional.sort !== null) optional.sort = {col: '-name', direction: 'asc'}
-    const {col, direction} = optional.sort
-
     // for each group fetching all students - to know how many students in group
     let options = {
         "with": {
@@ -86,17 +80,17 @@ export async function getGroups({params=defaultParams, optional={search: '', sor
         }
     }
 
-    if (optional.search !== ''){ 
+    if (search !== ''){ 
         options["filter"] = [
         { 
             "column": 'name', 
             "operator": 'ilike', 
-            "value": '%' + optional.search + '%'
+            "value": '%' + search + '%'
         }]
     }
 
 
-    return await API({url: `groups/search`, requestOptions: options, params: {...params, order: [col]}})
+    return await API({url: `groups/search`, requestOptions: options, params: {...params}})
 }
 
 
@@ -115,14 +109,14 @@ export async function Del(endpoint, id){
 }
 
 // search can be used as in getGroups if need 
-export async function getQuests({params=defaultParams, optional={search: '' }}){
+export async function getQuests({params=defaultParams, search='' }){
     return await API({url: 'quests/search', params: params})
 }
 
 
-export async function getProgress(groupID, questID){
+export async function getProgress(groupID, questID, sortCol = '-id'){
     console.log('getProgress params: ', groupID, questID)
-    return await API({url: 'progress/get', method: 'get', params: {group_id: groupID, quest_id: questID}})
+    return await API({url: 'progress/get', method: 'get', params: {group_id: groupID, quest_id: questID, order: [sortCol]}})
 }
 
 

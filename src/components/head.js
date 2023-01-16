@@ -32,7 +32,8 @@ export const Head = () => {
     setAnchorElUser(null);
   };
 
-  return ( <AppBar position="static">
+  // red-theme: #db2235
+  return ( <AppBar position="static" sx={{background: 'linear-gradient(0deg, rgba(0,25,89,0.9177871832326681) 42%, rgba(0,15,67,1) 97%)'}}>
       <Box>
         <Toolbar>
         <img src={VR} width={'50px'} height={'50px'} style={{marginRight: '2rem', cursor: 'pointer', flexGrow: 0}}

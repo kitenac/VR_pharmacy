@@ -42,7 +42,7 @@ export default function UserListHead({
   return (
     <TableHead>
       <TableRow>
-        {headLabel.map(({colName, id, alignRight}) => (
+        {headLabel.map(({colName, poleName, sortable, id, alignRight}) => (
           <TableCell
             key={id}
             align={alignRight ? 'right' : 'left'}
@@ -52,7 +52,7 @@ export default function UserListHead({
               hideSortIcon
               active={orderBy === id}
               direction={orderBy === id ? order : 'asc'}
-              onClick={createSortHandler(id)}
+              onClick={sortable ? createSortHandler(poleName) : null}
             >
               {colName} 
               {orderBy === id ? (

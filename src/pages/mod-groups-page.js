@@ -19,11 +19,11 @@ export const ModGroupsPage = () => {
     
     // last column('') - for 'options' pic!
     const columns = [
-      {colName: '', poleName: ''},
-      {colName: 'Код группы', poleName: "name"},
-      {colName: 'Число студентов', poleName: 'countStudents'},
-      {colName: 'Почта группы', poleName: 'email'},
-      {colName: '', poleName: ''}]
+      {colName: '', poleName: '', sortable: false},
+      {colName: 'Код группы', poleName: "name", sortable: true},
+      {colName: 'Число студентов', poleName: 'countStudents', sortable: false},
+      {colName: 'Почта группы', poleName: 'email', sortable: true},
+      {colName: '', poleName: '', sortable: false}]
 
     const poles={
       to_fill: [{

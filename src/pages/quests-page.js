@@ -52,9 +52,8 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
         variant="scrollable"
         scrollButtons
         allowScrollButtonsMobile
-        sx={{height: '4rem'}}
         >
-        {quests.length > 0 ? quests.map((el) => <Tab label={ el.name } onClick={() => setQuest(el.id)} />) : null }
+        {quests.length > 0 ? quests.map((el) => <Tab sx={{height: '4rem'}} label={ el.name } onClick={() => setQuest(el.id)} />) : null }
        </Tabs>
       }/>    
 }
@@ -64,10 +63,23 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
 
 
 function StudentsTable({
-  cur_quest_progress = {data: [], setData: {}}
+  cur_quest_progress = {data: [], setData: {}},
+  handleRequestSort
   }){
   
-  const columns = ['', 'ФИО', 'Поцент выполнения', 'Обзор подзадач', 'Время начала', 'Время завершения']
+  // const columns = ['', 'ФИО', 'Поцент выполнения', 'Обзор подзадач', 'Время начала', 'Время завершения']
+
+  
+  const columns = [
+    {colName: '', poleName: ""}, 
+    {colName: 'ФИО', poleName: "student_full_name", sortable: true},
+    {colName: 'Поцент выполнения', poleName: "quest_true_answer_count", sortable: true},
+    {colName: 'Обзор подзадач', poleName: "task_map", sortable: false},
+    {colName: 'Время начала', poleName: "quest_start_at", sortable: true},
+    {colName: 'Время завершения', poleName: "quest_end_at", sortable: true},
+    ]
+  
+  // onClick={sortable ? (e) => handleRequestSort(e, poleName) : null}
 
 
 // ===============   Output table after dealing with fetching cur_quest_progress   ===============
@@ -77,7 +89,7 @@ function StudentsTable({
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map((el) => <TableCell> {el} </TableCell> )}
+              {columns.map(({colName, poleName, sortable}) => <TableCell onClick={sortable ? (e)=>handleRequestSort(e, poleName) : null}> {colName} </TableCell> )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -156,7 +168,7 @@ export const Items = (items, setGroup) => {
                 <List style={{width: '100%'}}>
                     <ListItemButton  sx={card} id={group.id} onClick={() => {console.log(' **** set group_id:', group.id); setGroup(group.id)}}>
                         <ListItemAvatar >
-                           { <Groups/> }
+                           { <Groups sx={{color: '#07378F'}}/> }
                         </ListItemAvatar>
 
                         <Typography style={{color: '#F6F7F6'}}>{group.name}</Typography>            
@@ -170,10 +182,13 @@ const GroupBar = (props) => {
     const {groups, Paginator, setGroup} = props
 
     // gradient: https://cssgradient.io/
+    // old color: linear-gradient(0deg, rgba(35,123,247,1) 42%, rgba(5,82,189,0.9654062308517157) 97%)
+    // red-theme: linear-gradient(0deg, rgba(150,16,34,1) 63%, rgba(219,34,53,1) 97%)
+    
     return <ColumnContainer style={{  
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: 'linear-gradient(0deg, rgba(35,123,247,1) 42%, rgba(5,82,189,0.9654062308517157) 97%)',
+            background: 'linear-gradient(0deg, rgba(0,15,67,1) 42%, rgba(0,25,89,1) 97%)',
             width: '20%',
             height: 'calc(100vh - 64px)',
             flexWrap: 'nowrap',
@@ -192,7 +207,7 @@ const GroupBar = (props) => {
     </ColumnContainer>
 }
 
-async function getGroupsData(setData, Params={params: null, optional: null}) {
+async function getGroupsData(setData, Params={params: null}) {
   const groups = await getGroups(Params)
   setData(groups)
 }
@@ -202,7 +217,7 @@ async function getQuestsData(setData, Params){
   setData(quests)
 }
 
-async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 'no_id'}}){
+async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 'no_id'}, sortCol: '-id'}){
   const progress = await getProgress(args.group.id, args.quest.id)
   setData(progress.data)
 } 
@@ -217,10 +232,7 @@ export const QuestsPage = () => {
       limit: 10,
       page: 1,
       order: ['-id']},
-    optional: {
-      search: '', 
-      sort: {col: null, direction: 'asc'}
-    }
+    search: '', 
   }
 
   // params for pagination in /groups/search
@@ -229,18 +241,17 @@ export const QuestsPage = () => {
   // same for /quests/search
   const [QuestParams, setQuestParams] = useState({ params: {...defaultPaginationParams.params, limit: 4} })
 
-
   const [groups, setGroups] = useState({data:[], meta: {}})
   const {data: Data, meta: Meta} = groups
 
   const [quests, setQuests] = useState({data:[], meta: {}})
   const [progress, setProgress] = useState([{}])
-  const [chosen, setChosen] = useState({ group: null, quest: null })
+  const [chosen, setChosen] = useState({ group: null, quest: null, sortCol: '-id' })
 
 
   // init default state for chosen group`s quest progress after fetching someth
   if (!chosen.group && groups.data.length > 0 && quests.data.length > 0)
-      setChosen({ group: groups.data[0], quest: quests.data[0] })
+      setChosen({ group: groups.data[0], quest: quests.data[0], sortCol: '-id' })
     
   // refreshing groups
   useEffect(() => {
@@ -266,6 +277,14 @@ export const QuestsPage = () => {
     })
   }, [quests])
 
+  
+
+  const handleRequestSort = (event, poleName) => {
+    const order = [chosen.sortCol[0]==='-' ? poleName : '-'+poleName]
+    setChosen({...chosen, 
+      sortCol: order
+    })
+  };
 
   // paginator`s handlers
   const handleChangePage = (e, newPage) => {
@@ -326,7 +345,10 @@ export const QuestsPage = () => {
                   setChosen({...chosen, quest: {...chosen.quest, id: id }})
                 }}
                 />
-                <StudentsTable style={{ marginTop: '1rem'}} cur_quest_progress={ progress ? {data: progress} : null } />    
+                <StudentsTable 
+                  style={{ marginTop: '1rem'}} 
+                  cur_quest_progress={ progress ? {data: progress} : null } 
+                  handleRequestSort={handleRequestSort}/>    
             </ColumnContainer>
                 
             </div>

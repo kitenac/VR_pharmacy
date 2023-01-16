@@ -75,10 +75,7 @@ export const InteractiveTable = (props) => {
       limit: 10,
       page: 1,
       order: ['-id']},
-    optional: {
-      search: '', 
-      sort: {col: null, direction: 'asc'}
-    }
+    search: '',
   })
   
   const [curRow, setRow] = useState({})
@@ -141,10 +138,8 @@ export const InteractiveTable = (props) => {
   const handleFilterByName = (e, col) => {
     setParams({
       ...Params, 
-      optional: {
-        ...Params.optional, 
-        search: e.target.value
-      }})
+      search: e.target.value
+    })
   };
 
   const handleOpenMenu = (e, row) => {
@@ -157,10 +152,14 @@ export const InteractiveTable = (props) => {
   }
 
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+  const handleRequestSort = (event, poleName) => {
+    const order = [Params.params.order[0][0]==='-' ? poleName : '-'+poleName]
+
+    setParams({...Params, params: {
+      limit: 10,
+      page: 1,
+      order: order},
+    })
   };
 
   const handleSelectAllClick = (event) => {
@@ -171,22 +170,6 @@ export const InteractiveTable = (props) => {
     }
     setSelected([]);
   };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
-
 
 
   
@@ -214,7 +197,7 @@ export const InteractiveTable = (props) => {
         </Stack>
         
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={Params.optional.search} onFilterName={handleFilterByName} />
+          <UserListToolbar numSelected={selected.length} filterName={Params.search} onFilterName={handleFilterByName} />
 
           
             <TableContainer>
@@ -296,7 +279,7 @@ export const InteractiveTable = (props) => {
 
                           <Typography variant="body2">
                             Ничего не найдено по запросу &nbsp;
-                            <strong>&quot;{Params.optional.search}&quot;</strong>.
+                            <strong>&quot;{Params.search}&quot;</strong>.
                             <br /> Попробуйте проверить регистр или вводить слова целиком.
                           </Typography>
                         </Paper>
