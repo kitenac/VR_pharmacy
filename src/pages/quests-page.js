@@ -36,18 +36,26 @@ export async function questsList(setData, Params) {
 
 const QuestBar = ({quests = [], setQuest, PagParams}) =>{
     const [value, setValue] = useState(0)
-    
+     
+    const SetValue = (val) => localStorage.setItem("BarKey", val)
+    const GetValue = () => JSON.parse(localStorage.getItem("BarKey"))
+
+    if ( !localStorage.getItem("BarKey") ) SetValue(0)
+    const Value = GetValue()
+
     // moving bar`s underline to bar #newValue
     const handleChange = (event, newValue) => {
-      setValue(newValue)
+      //setValue(newValue)
+      SetValue(newValue)
     }
 
+    console.log('value:', Value)
     const {onChange} = PagParams
     return <MiniPaginator 
-      PagParams={PagParams={ ...PagParams, onChange: (e, page) => {onChange(e, page); setValue(0)} } }
+      PagParams={PagParams={ ...PagParams, onChange: (e, page) => {onChange(e, page); SetValue(0)} } }
       content={
        <Tabs
-        value={value}
+        value={Value}
         onChange={handleChange}
         variant="scrollable"
         scrollButtons
@@ -217,7 +225,7 @@ async function getQuestsData(setData, Params){
   setData(quests)
 }
 
-async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 'no_id'}, sortCol: '-id'}){
+async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 'no_id'}}){
   const progress = await getProgress(args.group.id, args.quest.id)
   setData(progress.data)
 } 
@@ -246,12 +254,17 @@ export const QuestsPage = () => {
 
   const [quests, setQuests] = useState({data:[], meta: {}})
   const [progress, setProgress] = useState([{}])
-  const [chosen, setChosen] = useState({ group: null, quest: null, sortCol: '-id' })
-
+  const [chosen, setChosen] = useState({ group: null, quest: null })
 
   // init default state for chosen group`s quest progress after fetching someth
-  if (!chosen.group && groups.data.length > 0 && quests.data.length > 0)
-      setChosen({ group: groups.data[0], quest: quests.data[0], sortCol: '-id' })
+  // check if there`s cashed which quest/group was chosen previously
+  const setChosenCashed = (val) => localStorage.setItem("chosen", JSON.stringify(val))
+  const getChosenCashed = () => JSON.parse(localStorage.getItem("chosen")) 
+  const cashedChosen = getChosenCashed()
+
+  if (cashedChosen && !chosen.group) {setChosen(cashedChosen); console.log('cashed out!!!')}
+  else if (!cashedChosen) {setChosen({ group: groups.data[0], quest: quests.data[0] }); console.log("@@@ no fckn way o_0")}
+ 
     
   // refreshing groups
   useEffect(() => {
@@ -260,8 +273,12 @@ export const QuestsPage = () => {
 
   // refreshing progress-table weather "chosens" are
   useEffect(() => {
+
     console.log('===== chosens are: ', chosen)
-    if (chosen.group && chosen.quest) getProgressData(setProgress, chosen) 
+    if (chosen.group && chosen.quest) {
+      getProgressData(setProgress, chosen)
+      localStorage.setItem("chosen", JSON.stringify(chosen))
+    } 
   }, [chosen])
 
   // refreshing list of Quests on a selected page 
@@ -269,21 +286,11 @@ export const QuestsPage = () => {
     getQuestsData(setQuests, QuestParams)  
   }, [QuestParams])
 
-  // refreshing progress-table after moving to another page of Quests
-  useEffect(()=>{
-    if (quests.data[0]) setChosen({
-      ...chosen, 
-      quest: {...chosen.quest, id: quests.data[0].id }
-    })
-  }, [quests])
 
   
 
   const handleRequestSort = (event, poleName) => {
-    const order = [chosen.sortCol[0]==='-' ? poleName : '-'+poleName]
-    setChosen({...chosen, 
-      sortCol: order
-    })
+    
   };
 
   // paginator`s handlers

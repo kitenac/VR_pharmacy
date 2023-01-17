@@ -51,6 +51,7 @@ export const Modal = ({isOpen, setOpen, poles,
             {hasReadyData ? 
               poles.to_fill.map((pole) => {
                 return  <TextField label={previousVal ?  previousVal : pole.placeholder}
+                value={previousVal ?  previousVal : pole.placeholder}
                 variant="outlined"
                 onChange={(e) => {
                   e.preventDefault()

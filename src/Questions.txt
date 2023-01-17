@@ -6,15 +6,23 @@ Tasks:
 
 2. prettier form - like clerc ~ onRowClick - window with student`s progress
 3. search and sort everywhere
- 
+5. set placeholder in form to prev val 
+
+
  sort for quests: 
   - take a look at getProgressData()
   - sortCol in chosen
   - handleRequestSort()
+  + show up/down arrows 
 
 * reflect change on-fly: long-pulling(pinging if change occured) + memoization(to prevent scrolling down after new data rendered up)
 
 
+  // useState-like localStorage handling:
+  let Chosen = { group: groups.data[0], quest: quests.data[0], sortCol: '-id' }
+  const GetChosen = () => JSON.parse(localStorage.getItem("chosen"))
+  const SetChosen = (val) => localStorage.setItem("chosen", JSON.stringify(val))
+   
 
 1.  POST /students 
 1.5 - where`s pswd for particular student?

@@ -114,9 +114,9 @@ export async function getQuests({params=defaultParams, search='' }){
 }
 
 
-export async function getProgress(groupID, questID, sortCol = '-id'){
+export async function getProgress(groupID, questID){
     console.log('getProgress params: ', groupID, questID)
-    return await API({url: 'progress/get', method: 'get', params: {group_id: groupID, quest_id: questID, order: [sortCol]}})
+    return await API({url: 'progress/get', method: 'get', params: {group_id: groupID, quest_id: questID}})
 }
 
 
