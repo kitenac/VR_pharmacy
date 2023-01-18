@@ -262,8 +262,11 @@ export const QuestsPage = () => {
   const getChosenCashed = () => JSON.parse(localStorage.getItem("chosen")) 
   const cashedChosen = getChosenCashed()
 
-  if (cashedChosen && !chosen.group) {setChosen(cashedChosen); console.log('cashed out!!!')}
-  else if (!cashedChosen) {setChosen({ group: groups.data[0], quest: quests.data[0] }); console.log("@@@ no fckn way o_0")}
+  if (!chosen.group && !chosen.quest){
+    if (cashedChosen) {setChosen(cashedChosen); console.log('cashed out!!!', getChosenCashed())}
+    else if (groups.data.length > 0 && quests.data.length > 0) setChosen({group: groups.data[0], quest: quests.data[0]})
+  }
+  ///else if (!cashedChosen && quests.data !== [] && groups.data !== []) {setChosen({ group: groups.data[0], quest: quests.data[0] }); console.log("@@@ no fckn way o_0")}
  
     
   // refreshing groups
