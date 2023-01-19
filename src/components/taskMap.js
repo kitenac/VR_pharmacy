@@ -1,6 +1,6 @@
 
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Brightness1Icon from '@mui/icons-material/Brightness1'
 import { Popover, Typography, Box, Menu, Tooltip } from '@mui/material'
 
@@ -40,12 +40,12 @@ const TaskItem = ({params = {task_name:'-', task_id: '-', answer: false}}) => {
 
     const handleChangePage = (e, page) => {
       setParams({ 
-        ...Params,
         page: page,
         content: tasks.slice((page - 1) * limit, page * limit)
       })
 
     }
+
 
 
     let rows = []

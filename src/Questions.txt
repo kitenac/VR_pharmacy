@@ -6,14 +6,11 @@ Tasks:
 
 2. prettier form - like clerc ~ onRowClick - window with student`s progress
 3. search and sort everywhere
-5. set placeholder in form to prev val 
 
 
  sort for quests: 
-  - take a look at getProgressData()
-  - sortCol in chosen
-  - handleRequestSort()
-  + show up/down arrows 
+  - solve bug with freezed TaskMap after filtering
+  - toggling and show up/down arrows 
 
 * reflect change on-fly: long-pulling(pinging if change occured) + memoization(to prevent scrolling down after new data rendered up)
 

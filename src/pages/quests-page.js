@@ -2,7 +2,7 @@ import dayjs from "dayjs"         // lib to parse back`s date
 import { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import { Groups } from '@mui/icons-material';
+import { Groups, ArrowDownward, ArrowUpward} from '@mui/icons-material';
 import { Box, 
          Button,
          Table,
@@ -45,7 +45,6 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
 
     // moving bar`s underline to bar #newValue
     const handleChange = (event, newValue) => {
-      //setValue(newValue)
       SetValue(newValue)
     }
 
@@ -77,18 +76,25 @@ function StudentsTable({
   
   // const columns = ['', 'ФИО', 'Поцент выполнения', 'Обзор подзадач', 'Время начала', 'Время завершения']
 
-  
+  const [sortRow, setSortRow] = useState({
+    i: null,
+    isAsc: null
+  })
+
   const columns = [
     {colName: '', poleName: ""}, 
-    {colName: 'ФИО', poleName: "student_full_name", sortable: true},
-    {colName: 'Поцент выполнения', poleName: "quest_true_answer_count", sortable: true},
+    {colName: 'ФИО', poleName: "student_full_name", sortable: true, isAsc: true},
+    {colName: 'Поцент выполнения', poleName: "quest_true_answer_count", sortable: true, isAsc: true},
     {colName: 'Обзор подзадач', poleName: "task_map", sortable: false},
-    {colName: 'Время начала', poleName: "quest_start_at", sortable: true},
-    {colName: 'Время завершения', poleName: "quest_end_at", sortable: true},
+    {colName: 'Время начала', poleName: "quest_start_at", sortable: true, isAsc: true},
+    {colName: 'Время завершения', poleName: "quest_end_at", sortable: true, isAsc: true},
     ]
   
-  // onClick={sortable ? (e) => handleRequestSort(e, poleName) : null}
 
+  const toggleDirectition = (i, isAsc) => {
+    const direct = isAsc !== null ? !isAsc : true 
+    //setColumns([...columns.slice(0, i), {...columns[i], isAsc: direct}, ...columns.slice(i+1,) ])
+  }
 
 // ===============   Output table after dealing with fetching cur_quest_progress   ===============
 
@@ -97,7 +103,11 @@ function StudentsTable({
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map(({colName, poleName, sortable}) => <TableCell onClick={sortable ? (e)=>handleRequestSort(e, poleName) : null}> {colName} </TableCell> )}
+              {columns.map(({colName, poleName, sortable}, i) => <TableCell onClick={sortable ? (e)=>{
+                let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
+                setSortRow({ i: i, isAsc: dir})
+                handleRequestSort(e, poleName, sortRow.isAsc); } 
+                : null} sx={{ cursor: sortable ? 'pointer' : 'arrow'}}> {colName} {i === sortRow.i ? sortRow.isAsc ? <ArrowUpward/> : <ArrowDownward/> : null}</TableCell> )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -231,6 +241,10 @@ async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 
 } 
 
 
+const sortByPole = (arr, pole) => {
+  
+}
+
 
 // 'calc(100% - 64px)' - bc height of <Head/> is 64px - known by expirements
 export const QuestsPage = () => {
@@ -266,8 +280,7 @@ export const QuestsPage = () => {
     if (cashedChosen) {setChosen(cashedChosen); console.log('cashed out!!!', getChosenCashed())}
     else if (groups.data.length > 0 && quests.data.length > 0) setChosen({group: groups.data[0], quest: quests.data[0]})
   }
-  ///else if (!cashedChosen && quests.data !== [] && groups.data !== []) {setChosen({ group: groups.data[0], quest: quests.data[0] }); console.log("@@@ no fckn way o_0")}
- 
+  
     
   // refreshing groups
   useEffect(() => {
@@ -290,11 +303,23 @@ export const QuestsPage = () => {
   }, [QuestParams])
 
 
-  
-
-  const handleRequestSort = (event, poleName) => {
+  const handleRequestSort = (event, poleName, asc=true) => {
+    const buff = JSON.parse(JSON.stringify(progress)) 
+    switch (typeof(buff[0][poleName])){
+      case "number":
+        buff.sort((a,b) => asc ? a[poleName] - b[poleName] : b[poleName] - a[poleName])
+        break
+      case "string":
+        const minus = !asc ? -1 : 1     // to switch sort-order
+        buff.sort((a,b) => a[poleName] > b[poleName] ? minus*1 : minus*-1)
+        break
+    }    
     
+    setProgress(buff)
+    
+    console.log('sorted progress table: ', buff, 'sorted by ', poleName)
   };
+
 
   // paginator`s handlers
   const handleChangePage = (e, newPage) => {
