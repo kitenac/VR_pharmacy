@@ -84,7 +84,7 @@ function StudentsTable({
   const columns = [
     {colName: '', poleName: ""}, 
     {colName: 'ФИО', poleName: "student_full_name", sortable: true, isAsc: true},
-    {colName: 'Поцент выполнения', poleName: "quest_true_answer_count", sortable: true, isAsc: true},
+    {colName: 'Поцент выполнения', fraction: ["quest_true_answer_count", "quest_total_tasks_count"], sortable: true, isAsc: true},
     {colName: 'Обзор подзадач', poleName: "task_map", sortable: false},
     {colName: 'Время начала', poleName: "quest_start_at", sortable: true, isAsc: true},
     {colName: 'Время завершения', poleName: "quest_end_at", sortable: true, isAsc: true},
@@ -103,10 +103,10 @@ function StudentsTable({
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map(({colName, poleName, sortable}, i) => <TableCell onClick={sortable ? (e)=>{
+              {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell onClick={sortable ? (e)=>{
                 let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
                 setSortRow({ i: i, isAsc: dir})
-                handleRequestSort(e, poleName, sortRow.isAsc); } 
+                handleRequestSort(e, poleName, sortRow.isAsc, fraction); } 
                 : null} sx={{ cursor: sortable ? 'pointer' : 'arrow'}}> {colName} {i === sortRow.i ? sortRow.isAsc ? <ArrowUpward/> : <ArrowDownward/> : null}</TableCell> )}
             </TableRow>
           </TableHead>
@@ -303,11 +303,18 @@ export const QuestsPage = () => {
   }, [QuestParams])
 
 
-  const handleRequestSort = (event, poleName, asc=true) => {
+  const handleRequestSort = (event, poleName, asc=true, fraction=[]) => {
     const buff = JSON.parse(JSON.stringify(progress)) 
-    switch (typeof(buff[0][poleName])){
+    const [n,m] = fraction
+
+    console.log('filtering type is: ', typeof(buff[0][poleName || fraction[0]]))
+
+    switch (typeof(buff[0][poleName || fraction[0]]) ){
       case "number":
-        buff.sort((a,b) => asc ? a[poleName] - b[poleName] : b[poleName] - a[poleName])
+        // compare by fraction n/m of poles n, m if such given(fraction = [n, m]) 
+        (fraction.length === 2) ?
+          buff.sort((a,b)=> asc ? parseInt((a[n]/a[m] - b[n]/b[m])*100) : parseInt((b[n]/b[m] - a[n]/a[m])*100) ):
+          buff.sort((a,b) => asc ? a[poleName] - b[poleName] : b[poleName] - a[poleName])
         break
       case "string":
         const minus = !asc ? -1 : 1     // to switch sort-order
@@ -317,7 +324,7 @@ export const QuestsPage = () => {
     
     setProgress(buff)
     
-    console.log('sorted progress table: ', buff, 'sorted by ', poleName)
+    console.log('sorted progress table: ', buff, 'sorted by ', poleName ? poleName : 'fraction: ' + fraction )
   };
 
 
