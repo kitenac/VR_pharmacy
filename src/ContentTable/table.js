@@ -74,7 +74,7 @@ export const InteractiveTable = (props) => {
     params: {
       limit: 10,
       page: 1,
-      order: ['-id']},
+      order: ["-created_at"]},
     search: '',
   })
   

@@ -8,6 +8,10 @@ Tasks:
 3. search and sort everywhere
 
 
+  1 id to every map/for
+  2 group page to cash
+
+
  sort for quests: 
   - solve bug with freezed TaskMap after filtering
   - toggling and show up/down arrows 

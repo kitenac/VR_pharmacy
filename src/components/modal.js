@@ -1,6 +1,7 @@
 import { Button, Popover, TextField, Typography } from "@mui/material"
 import { RowContainer, ColumnContainer } from "../shitty-lib/containers"
-import { Close, Image } from "@mui/icons-material"
+import { Close, Image} from "@mui/icons-material"
+import Divider from '@mui/material/Divider';
 import { useState } from "react"
 
 import { Add, Del, Modify } from "../Utils/requests"
@@ -41,17 +42,17 @@ export const Modal = ({isOpen, setOpen, poles,
         }}
         >
        <RowContainer style={{justifyContent: 'space-between', alignItems: 'start', paddingBottom: '1rem'}}> 
-            <Typography variant="h3">{title}</Typography>
+            <Typography sx={{textAlign: "center"}} variant="h3">{title}</Typography>
             <Close sx={{width: '40px', height: '40px', cursor: 'pointer'}}
             onClick={() => setOpen(false)}/>
         </RowContainer>
 
         
         <ColumnContainer>
+            <Divider variant="middle" sx={{marginBottom: '3rem'}}/>
             {hasReadyData ? 
               poles.to_fill.map((pole) => {
                 return  <TextField label={previousVal ?  previousVal : pole.placeholder}
-                value={previousVal ?  previousVal : pole.placeholder}
                 variant="outlined"
                 onChange={(e) => {
                   e.preventDefault()

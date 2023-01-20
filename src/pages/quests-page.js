@@ -124,7 +124,8 @@ function StudentsTable({
                   quest_total_tasks_count,
                   quest_true_answer_count,
                   quest_false_answer_count,
-                  tasks
+                  tasks,
+                  student_id
                 } = quest_result
               
                 let row
@@ -141,16 +142,16 @@ function StudentsTable({
                   (quest_false_answer_count === 0) ? '100%' : Math.round((quest_true_answer_count/quest_total_tasks_count)*100) + '%',
                   <TaskMap tasks={tasks}/>,
                   dayjs(quest_start_at).format("DD.MM.YYYY H:m:s"),
-                  dayjs(quest_end_at).format("DD.MM.YYYY  H:m:s"),
+                  dayjs(quest_end_at).format("DD.MM.YYYY  H:m:s")
                 ]
               
-                return <TableRow>
+                return <TableRow key={student_id}>
                   <TableCell align='right' sx={{width: '1rem'}}>
                     <Typography variant="subtitle4" noWrap> 
                       {`${idx+1}.`} 
                     </Typography>
                   </TableCell>
-                  {row.map((el) => <TableCell> {el} </TableCell>)}
+                  {row.map((el, idx) => <TableCell key={`${student_id}_${idx}`}> {el} </TableCell>)}
                 </TableRow>
               }
             ) : <Spinner spinner_path={Centrifuge}/>
@@ -216,7 +217,7 @@ const GroupBar = (props) => {
             
             <Typography variant='h4' style={{color: '#F6F7F6'}}>Группы</Typography>
 
-            <Box sx={{'scrollbar-width': 'none', width: '90%', height: '80%' }}> 
+            <Box sx={{'scrollbar-width': 'none', width: '90%', height: '80%', overflow: 'scroll' }}> 
                { groups.length > 0 ? Items(groups, setGroup) : CircleDots } 
             </Box>
             {Paginator}
@@ -241,10 +242,6 @@ async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 
 } 
 
 
-const sortByPole = (arr, pole) => {
-  
-}
-
 
 // 'calc(100% - 64px)' - bc height of <Head/> is 64px - known by expirements
 export const QuestsPage = () => {
@@ -258,7 +255,7 @@ export const QuestsPage = () => {
   }
 
   // params for pagination in /groups/search
-  const [Params, setParams] = useState(defaultPaginationParams)
+  const [Params, setParams] = useState({...defaultPaginationParams, params: {...defaultPaginationParams.params, order: ["-created_at"]}})
 
   // same for /quests/search
   const [QuestParams, setQuestParams] = useState({ params: {...defaultPaginationParams.params, limit: 4} })
