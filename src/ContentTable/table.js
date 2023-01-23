@@ -31,6 +31,7 @@ import { DelModal as Del, ModifyModal, AddModal as Add } from '../components/mod
 import { ScanningMan } from '../Media';
 // ----------------------------------------------------------------------
 
+
 const Spinner = ({spinner_path = '/nope'}) => {
   return <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}> 
     <img src={spinner_path}/> </Box>
@@ -246,7 +247,7 @@ export const InteractiveTable = (props) => {
                         </TableCell>
 
                         
-                        {content.map(({poleName}) => <TableCell onClick={(e) => handleRowClick(e, row)} 
+                        {content.map(({poleName}) => <TableCell key={`${id+poleName+idx}`} onClick={(e) => handleRowClick(e, row)} 
                                                           align="left"> {row[poleName]} </TableCell>)}
                       
 

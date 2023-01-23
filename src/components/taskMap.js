@@ -31,6 +31,8 @@ const TaskItem = ({params = {task_name:'-', task_id: '-', answer: false}}) => {
   
   export const TaskMap = ({ tasks = [{task_name: '', answer: false}], limit =  6, rows_count = 2}) => {
     
+    const key_gen = (id) => `${'cool_task_el'+id+'o_0'}`
+
     const [Params, setParams] = useState({
       page: 1,     
       content: tasks.slice(0, limit)      
@@ -62,8 +64,8 @@ const TaskItem = ({params = {task_name:'-', task_id: '-', answer: false}}) => {
         
         <MiniPaginator 
           content = <ColumnContainer style={{rowGap: '10px'}}> {
-              rows.map( (row) => <RowContainer style={{gap: '20px'}}> 
-                {row.map(({task_name, task_id, answer}) => <TaskItem params={ {task_name, task_id, answer} }/>)} 
+              rows.map( (row, i) => <RowContainer style={{gap: '20px'}} key={'i`m taskContainer'+key_gen(i)}> 
+                {row.map(({task_name, task_id, answer}) => <TaskItem key={key_gen(task_id)} params={ {task_name, task_id, answer} }/>)} 
               </RowContainer>)
           }
           </ColumnContainer>

@@ -48,6 +48,8 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
       SetValue(newValue)
     }
 
+    const key_gen = (value, id) => `${value + 'cool_id' + id}`
+
     console.log('value:', Value)
     const {onChange} = PagParams
     return <MiniPaginator 
@@ -60,7 +62,7 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
         scrollButtons
         allowScrollButtonsMobile
         >
-        {quests.length > 0 ? quests.map((el) => <Tab sx={{height: '4rem'}} label={ el.name } onClick={() => setQuest(el.id)} />) : null }
+        {quests.length > 0 ? quests.map((el) => <Tab key={key_gen(value, el.id)} sx={{height: '4rem'}} label={ el.name } onClick={() => setQuest(el.id)} />) : null }
        </Tabs>
       }/>    
 }
@@ -84,7 +86,7 @@ function StudentsTable({
   const columns = [
     {colName: '', poleName: ""}, 
     {colName: 'ФИО', poleName: "student_full_name", sortable: true, isAsc: true},
-    {colName: 'Поцент выполнения', fraction: ["quest_true_answer_count", "quest_total_tasks_count"], sortable: true, isAsc: true},
+    {colName: 'Процент выполнения', fraction: ["quest_true_answer_count", "quest_total_tasks_count"], sortable: true, isAsc: true},
     {colName: 'Обзор подзадач', poleName: "task_map", sortable: false},
     {colName: 'Время начала', poleName: "quest_start_at", sortable: true, isAsc: true},
     {colName: 'Время завершения', poleName: "quest_end_at", sortable: true, isAsc: true},
@@ -97,13 +99,14 @@ function StudentsTable({
   }
 
 // ===============   Output table after dealing with fetching cur_quest_progress   ===============
+    const key_gen = (i, poleName) => `${i+'head_id'+poleName}`
 
     return (
       <TableContainer component={Paper} className="noscroll" style={{ height: 'calc(81vh - 64px)'}}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell onClick={sortable ? (e)=>{
+              {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell key={key_gen(i, poleName)} onClick={sortable ? (e)=>{
                 let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
                 setSortRow({ i: i, isAsc: dir})
                 handleRequestSort(e, poleName, sortRow.isAsc, fraction); } 
@@ -182,15 +185,16 @@ const Spinner = ({spinner_path = '/nope'}) => {
 
 export const Items = (items, setGroup) => {
     console.log('items: ', items)
+    const key_gen = (group) => `${group.id + 'pretty_ID' + items.length}`
     return (items.map((group) => {
         return <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'start'}}>
                 <List style={{width: '100%'}}>
-                    <ListItemButton  sx={card} id={group.id} onClick={() => {console.log(' **** set group_id:', group.id); setGroup(group.id)}}>
-                        <ListItemAvatar >
+                    <ListItemButton  sx={card} key={key_gen(group)} onClick={() => {console.log(' **** set group_id:', group.id); setGroup(group.id)}}>
+                        <ListItemAvatar key={key_gen(group)+'ava'}>
                            { <Groups sx={{color: '#07378F'}}/> }
                         </ListItemAvatar>
 
-                        <Typography style={{color: '#F6F7F6'}}>{group.name}</Typography>            
+                        <Typography key={key_gen(group)+'g_text'} style={{color: '#F6F7F6'}}>{group.name}</Typography>            
                     </ListItemButton>
                 </List>
             </Box>} ))
@@ -198,6 +202,7 @@ export const Items = (items, setGroup) => {
     
 
 const GroupBar = (props) => {
+    //const key_gen = () => `${}`
     const {groups, Paginator, setGroup} = props
 
     // gradient: https://cssgradient.io/

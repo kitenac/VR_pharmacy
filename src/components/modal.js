@@ -23,6 +23,8 @@ export const Modal = ({isOpen, setOpen, poles,
     
     const [Data, setData] = useState(hasReadyData ? poles.readyData : {})    // data for request
     
+    const key_gen = (i, name) => `${name + 'modal' + i}`
+    
     return <Popover
         open={Boolean(isOpen)}
         anchorEl={isOpen}
@@ -51,8 +53,10 @@ export const Modal = ({isOpen, setOpen, poles,
         <ColumnContainer>
             <Divider variant="middle" sx={{marginBottom: '3rem'}}/>
             {hasReadyData ? 
-              poles.to_fill.map((pole) => {
+              poles.to_fill.map((pole, i) => {
                 return  <TextField label={previousVal ?  previousVal : pole.placeholder}
+                key={key_gen(i, pole.placeholder)}
+                value={Data[pole.name] ? Data[pole.name] : previousVal}
                 variant="outlined"
                 onChange={(e) => {
                   e.preventDefault()
@@ -63,7 +67,8 @@ export const Modal = ({isOpen, setOpen, poles,
              
 
             <RowContainer style={{width: '100%', gap: '10px', justifyContent: 'end'}}>
-              {buttons.map( ([name, color, onClick]) => <Button variant='contained'
+              {buttons.map( ([name, color, onClick], i) => <Button variant='contained'
+                                                       key={key_gen(i, name)+'btn'}
                                                        onClick={ (e) => {onClick(Data);}} 
                                                        sx={{ borderRadius: '10px', background: color }}> 
                                                 {name} </Button>)}
