@@ -1,6 +1,6 @@
 
 
-import { useEffect, useState } from 'react'
+import { Component, useEffect, useState } from 'react'
 import Brightness1Icon from '@mui/icons-material/Brightness1'
 import { Popover, Typography, Box, Menu, Tooltip } from '@mui/material'
 
@@ -29,7 +29,7 @@ const TaskItem = ({params = {task_name:'-', task_id: '-', answer: false}}) => {
   }
   
   
-  export const TaskMap = ({ tasks = [{task_name: '', answer: false}], limit =  6, rows_count = 2}) => {
+  export const TaskMap = ({ tasks = [{task_name: '', answer: false}], limit =  6, rows_count = 2, Additinal}) => {
     
     const key_gen = (id) => `${'cool_task_el'+id+'o_0'}`
 
@@ -59,15 +59,15 @@ const TaskItem = ({params = {task_name:'-', task_id: '-', answer: false}}) => {
 
 
 
-    return <Box sx={{ padding: '0.5rem', borderRadius: '4px', minHeight: '4.5rem',
-      bgcolor: 'rgba(0.05, 0.05, 0.05, 0.05)', display: 'flex', justifyContent: 'center' }}>
+    return <Box sx={{ padding: 0, borderRadius: '4px', minHeight: '4rem', width: '15rem',
+      bgcolor: 'rgba(0.05, 0.05, 0.05, 0.05)', display: 'flex', justifyContent: 'space-around'}}>
         
         <MiniPaginator 
+          style={{width: '70%', alignSelf: 'end'}}
           content = <ColumnContainer style={{rowGap: '10px'}}> {
-              rows.map( (row, i) => <RowContainer style={{gap: '20px'}} key={'i`m taskContainer'+key_gen(i)}> 
-                {row.map(({task_name, task_id, answer}) => <TaskItem key={key_gen(task_id)} params={ {task_name, task_id, answer} }/>)} 
-              </RowContainer>)
-          }
+            rows.map( (row, i) => <RowContainer style={{gap: '20px'}} key={'i`m taskContainer'+key_gen(i)}> 
+              {row.map(({task_name, task_id, answer}) => <TaskItem key={key_gen(task_id)} params={ {task_name, task_id, answer} }/>)} 
+            </RowContainer>) }
           </ColumnContainer>
           
           PagParams={{
@@ -76,6 +76,10 @@ const TaskItem = ({params = {task_name:'-', task_id: '-', answer: false}}) => {
            onChange: handleChangePage}
           }
         />
-      
+          
+        {Additinal ?? Additinal} 
     </Box>
   }
+
+
+

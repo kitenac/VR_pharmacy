@@ -11,12 +11,9 @@ import {ThemeProvider as GitsTheme} from '../../theme_from_git'
 
 const testTheme = createTheme({
   palette: {
-    primary:{
-      main: '#33333'
+    cool_theme:{
+      deepPurple: "#101d96",
     },
-    secondary:{
-      main: '#ccccc'
-    }
   }
 })
 

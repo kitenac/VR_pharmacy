@@ -7,10 +7,11 @@ Tasks:
 2. prettier form - like clerc ~ onRowClick - window with student`s progress
 3. search and sort everywhere
 
-
-  1 id to every map/for
-  2 group page to cash
-
+  0 LocalStotrage updates too much render fells - need to finish saving curr page
+  1 group page to cash
+  2 fixed size for columns everywhere to prevent jumping
+    overlow - hide, but show onHover!!!
+ 
 
  sort for quests: 
   - solve bug with freezed TaskMap after filtering

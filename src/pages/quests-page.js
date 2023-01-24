@@ -2,6 +2,7 @@ import dayjs from "dayjs"         // lib to parse back`s date
 import { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { Groups, ArrowDownward, ArrowUpward} from '@mui/icons-material';
 import { Box, 
          Button,
@@ -13,7 +14,7 @@ import { Box,
          TableRow, 
          TablePagination,
          Paper, 
-         Tab, Tabs, ListItemButton, Typography, Pagination, PaginationItem, Backdrop, CircularProgress, Popover  } from '@mui/material'
+         Tab, Tabs, ListItemButton, Typography, Pagination, PaginationItem, Backdrop, CircularProgress, Popover, Input  } from '@mui/material'
 
 
 import { getProgress, getQuests, getGroups } from '../Utils/requests';
@@ -61,27 +62,84 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
         variant="scrollable"
         scrollButtons
         allowScrollButtonsMobile
+        indicatorColor='primary'
+        textColor="#101d96"
+        sx={{color:"#101d96"}}
         >
-        {quests.length > 0 ? quests.map((el) => <Tab key={key_gen(value, el.id)} sx={{height: '4rem'}} label={ el.name } onClick={() => setQuest(el.id)} />) : null }
+        {quests.length > 0 ? quests.map((el) => <Tab 
+          key={key_gen(value, el.id)} 
+          sx={{height: '4rem', width: '22rem'}} 
+          label={ 
+            el.name 
+          } 
+          onClick={() => setQuest(el.id)} />) : null }
        </Tabs>
       }/>    
 }
 
 
-
+// filter in js works bad with object`s poles somehow, so here goes:
+// - filtering array of objects by pole value 
+const i_hate_js_filter = (arr_of_objects, val, poleName) => {
+  let buff = []
+  arr_of_objects.map(el => (el[poleName].toLowerCase().includes(val.toLowerCase())) ? buff.push(el) : null)
+  return buff
+}
 
 
 function StudentsTable({
   cur_quest_progress = {data: [], setData: {}},
-  handleRequestSort
   }){
-  
-  // const columns = ['', 'ФИО', 'Поцент выполнения', 'Обзор подзадач', 'Время начала', 'Время завершения']
 
+  const [progress, setProgress] = useState(cur_quest_progress.data)
+    
   const [sortRow, setSortRow] = useState({
     i: null,
     isAsc: null
   })
+
+  // progress.length === 0 || e.target.value === '' || e.target.value === undefined
+
+  // sort and filter(serch)
+  const handleRequestSort = (e, poleName, asc=true, fraction=[]) => {
+    // handling where to use filtered progress(progress) and actual progress(cur_quest_progress)
+    let buff = (progress.length === 0 || e.target.value === '') ? 
+      JSON.parse(JSON.stringify(cur_quest_progress.data)):
+      JSON.parse(JSON.stringify(progress))
+    const [n,m] = fraction
+    
+    if (e.target.value){
+      buff = i_hate_js_filter(buff, e.target.value, poleName)
+      //buff.filter(el => el[poleName].includes(e.target.value))
+    }
+    else
+      switch (typeof(buff[0][poleName || fraction[0]]) ){
+        case "number":
+          // compare by fraction n/m of poles n, m if such given(fraction = [n, m]) 
+          (fraction.length === 2) ?
+            buff.sort((a,b)=> asc ? parseInt((a[n]/a[m] - b[n]/b[m])*100) : parseInt((b[n]/b[m] - a[n]/a[m])*100) ):
+            buff.sort((a,b) => asc ? a[poleName] - b[poleName] : b[poleName] - a[poleName])
+          break
+        case "string":
+          const minus = !asc ? -1 : 1     // to switch sort-order
+          buff.sort((a,b) => a[poleName] > b[poleName] ? minus*1 : minus*-1)
+          break
+      }    
+    
+    setProgress(buff)
+    
+    console.log('sorted progress table: ', buff, 'sorted by ', poleName ? poleName : 'fraction: ' + fraction, 'from table: ', progress )
+  }
+
+  
+  
+  useEffect(()=>{
+    setSortRow({
+      i: null,
+      isAsc: null })
+    setProgress(cur_quest_progress.data) 
+    },
+  [cur_quest_progress])
 
   const columns = [
     {colName: '', poleName: ""}, 
@@ -93,32 +151,49 @@ function StudentsTable({
     ]
   
 
-  const toggleDirectition = (i, isAsc) => {
-    const direct = isAsc !== null ? !isAsc : true 
-    //setColumns([...columns.slice(0, i), {...columns[i], isAsc: direct}, ...columns.slice(i+1,) ])
-  }
 
 // ===============   Output table after dealing with fetching cur_quest_progress   ===============
     const key_gen = (i, poleName) => `${i+'head_id'+poleName}`
 
+    console.log('*** table data :', progress)
     return (
       <TableContainer component={Paper} className="noscroll" style={{ height: 'calc(81vh - 64px)'}}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell key={key_gen(i, poleName)} onClick={sortable ? (e)=>{
-                let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
-                setSortRow({ i: i, isAsc: dir})
-                handleRequestSort(e, poleName, sortRow.isAsc, fraction); } 
-                : null} sx={{ cursor: sortable ? 'pointer' : 'arrow'}}> {colName} {i === sortRow.i ? sortRow.isAsc ? <ArrowUpward/> : <ArrowDownward/> : null}</TableCell> )}
+              {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell 
+                key={key_gen(i, poleName)} 
+                 
+                sx={{ cursor: sortable ? 'pointer' : 'arrow'}}> 
+                
+                <Box sx={{display: 'flex', flexDirection: 'row', gap: '5px'}}>
+                <Box
+                  onClick={sortable ? (e)=>{
+                    let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
+                    setSortRow({ i: i, isAsc: dir})
+                    handleRequestSort(e, poleName, sortRow.isAsc, fraction) } : null}> 
+                  {colName}
+                  {i === sortRow.i ? sortRow.isAsc ? <ArrowUpward/> : <ArrowDownward/> : sortable ? <ImportExportIcon/> : null} 
+                </Box>
+                
+                {
+                  poleName === "student_full_name" ?
+                  <Input 
+                    onChange={(e)=>handleRequestSort(e, poleName)}
+                    placeholder='введите имя студента...'  
+                  /> : null
+                }
+                </Box>
+                
+                </TableCell> )}
             </TableRow>
           </TableHead>
           <TableBody>
           {
             // progress might be uniterable
-            !cur_quest_progress.data[0] ? null :  
-            Object.keys(cur_quest_progress.data[0]).length > 0 ? 
-            cur_quest_progress.data.map(
+            !progress[0] ? null :  
+            Object.keys(progress[0]).length > 0 ? 
+            progress.map(
               (quest_result, idx) => {
                 const {
                   student_full_name,
@@ -143,7 +218,10 @@ function StudentsTable({
                 row = [
                   student_full_name,
                   (quest_false_answer_count === 0) ? '100%' : Math.round((quest_true_answer_count/quest_total_tasks_count)*100) + '%',
-                  <TaskMap tasks={tasks}/>,
+                  <TaskMap 
+                    tasks={tasks} 
+                    Additinal=<em style={{ alignSelf: 'end', color: '#07378F'}}> {quest_true_answer_count}/{quest_total_tasks_count} </em>
+                  />,
                   dayjs(quest_start_at).format("DD.MM.YYYY H:m:s"),
                   dayjs(quest_end_at).format("DD.MM.YYYY  H:m:s")
                 ]
@@ -260,7 +338,7 @@ export const QuestsPage = () => {
   }
 
   // params for pagination in /groups/search
-  const [Params, setParams] = useState({...defaultPaginationParams, params: {...defaultPaginationParams.params, order: ["-created_at"]}})
+  const [Params, setParams] = useState({})
 
   // same for /quests/search
   const [QuestParams, setQuestParams] = useState({ params: {...defaultPaginationParams.params, limit: 4} })
@@ -278,14 +356,32 @@ export const QuestsPage = () => {
   const getChosenCashed = () => JSON.parse(localStorage.getItem("chosen")) 
   const cashedChosen = getChosenCashed()
 
+  const isEmtyObj = (obj) => Object.keys(obj).length === 0
+
+  // same for group`s list
+  const setParamsCashed = (val) => localStorage.setItem("groups", JSON.stringify(val))
+  const getParamsCashed = () => JSON.parse(localStorage.getItem("groups")) 
+  const cashedParams = getParamsCashed()
+
+
+  // handling cashing
   if (!chosen.group && !chosen.quest){
     if (cashedChosen) {setChosen(cashedChosen); console.log('cashed out!!!', getChosenCashed())}
     else if (groups.data.length > 0 && quests.data.length > 0) setChosen({group: groups.data[0], quest: quests.data[0]})
   }
   
-    
+  if (isEmtyObj(Params)){
+    cashedParams ? setParams(cashedParams) :
+    setParams({
+      ...defaultPaginationParams,
+      params: {...defaultPaginationParams.params, order: ["-created_at"]}}) 
+  } 
+  
+  console.log('am i wrong?', Object.keys(Params).length === 0, Boolean(cashedParams))
+  
   // refreshing groups
   useEffect(() => {
+    setParamsCashed(Params)
     getGroupsData(setGroups, Params)
   }, [Params])
 
@@ -304,30 +400,6 @@ export const QuestsPage = () => {
     getQuestsData(setQuests, QuestParams)  
   }, [QuestParams])
 
-
-  const handleRequestSort = (event, poleName, asc=true, fraction=[]) => {
-    const buff = JSON.parse(JSON.stringify(progress)) 
-    const [n,m] = fraction
-
-    console.log('filtering type is: ', typeof(buff[0][poleName || fraction[0]]))
-
-    switch (typeof(buff[0][poleName || fraction[0]]) ){
-      case "number":
-        // compare by fraction n/m of poles n, m if such given(fraction = [n, m]) 
-        (fraction.length === 2) ?
-          buff.sort((a,b)=> asc ? parseInt((a[n]/a[m] - b[n]/b[m])*100) : parseInt((b[n]/b[m] - a[n]/a[m])*100) ):
-          buff.sort((a,b) => asc ? a[poleName] - b[poleName] : b[poleName] - a[poleName])
-        break
-      case "string":
-        const minus = !asc ? -1 : 1     // to switch sort-order
-        buff.sort((a,b) => a[poleName] > b[poleName] ? minus*1 : minus*-1)
-        break
-    }    
-    
-    setProgress(buff)
-    
-    console.log('sorted progress table: ', buff, 'sorted by ', poleName ? poleName : 'fraction: ' + fraction )
-  };
 
 
   // paginator`s handlers
@@ -350,8 +422,10 @@ export const QuestsPage = () => {
        limit: parseInt(e.target.value, 10), 
        page: 1 }
     })
-
   }
+
+
+  console.log('params now: ', Params, isEmtyObj(Params))
 
   // paginator for student`s progress table
   const Paginator = <TablePagination
@@ -363,8 +437,8 @@ export const QuestsPage = () => {
     component="div"
     rowsPerPageOptions={[10, 15, 25]}
     count={Meta.total}
-    rowsPerPage={Params.params.limit}
-    page={Params.params.page - 1}
+    rowsPerPage={!isEmtyObj(Params) ? Params.params.limit : 0}
+    page={!isEmtyObj(Params) ? Params.params.page - 1 : 0}
     onPageChange={handleChangePage}
     onRowsPerPageChange={handleChangeRowsPerPage}
   />
@@ -392,7 +466,7 @@ export const QuestsPage = () => {
                 <StudentsTable 
                   style={{ marginTop: '1rem'}} 
                   cur_quest_progress={ progress ? {data: progress} : null } 
-                  handleRequestSort={handleRequestSort}/>    
+            />    
             </ColumnContainer>
                 
             </div>
