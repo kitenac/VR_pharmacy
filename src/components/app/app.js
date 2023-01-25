@@ -1,7 +1,7 @@
 // libs
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@material-ui/core';
+
 // used components
 import {QuestsPage} from '../../pages/quests-page';
 import { ModGroupsPage } from '../../pages/mod-groups-page';
@@ -9,13 +9,8 @@ import { ModStudentsPage } from '../../pages/mod-students-page';
 
 import {ThemeProvider as GitsTheme} from '../../theme_from_git'
 
-const testTheme = createTheme({
-  palette: {
-    cool_theme:{
-      deepPurple: "#101d96",
-    },
-  }
-})
+
+// === To modify color theme - see:  theme_from_git/palette
 
 const App = () => {
 
@@ -24,7 +19,6 @@ const App = () => {
 
   return (
       <GitsTheme>
-      <ThemeProvider theme={testTheme}>
       <Router>
         <Routes>
           <Route exact path='/'             element={defaultRedirect()} />
@@ -34,9 +28,7 @@ const App = () => {
         </Routes>
 
       </Router>
-      </ThemeProvider>
-      </GitsTheme>
-  );
+      </GitsTheme>);
 };
 
 export default App;

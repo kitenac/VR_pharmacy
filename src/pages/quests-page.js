@@ -18,7 +18,7 @@ import { Box,
 
 
 import { getProgress, getQuests, getGroups } from '../Utils/requests';
-
+import { alpha } from "@mui/material";
 import { Head } from '../components/head'
 import { TaskMap } from "../components/taskMap"
 import { MiniPaginator, RowContainer, ColumnContainer } from '../shitty-lib';
@@ -63,14 +63,14 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
         scrollButtons
         allowScrollButtonsMobile
         indicatorColor='primary'
-        textColor="#101d96"
-        sx={{color:"#101d96"}}
+        textColor="primary"
         >
         {quests.length > 0 ? quests.map((el) => <Tab 
           key={key_gen(value, el.id)} 
-          sx={{height: '4rem', width: '22rem'}} 
+          className='noscroll'
+          style={{height: '7vh', width: '35vh', overflow: 'elipsis', display: 'flex', justifyContent: 'start'}} 
           label={ 
-            el.name 
+            el.name
           } 
           onClick={() => setQuest(el.id)} />) : null }
        </Tabs>
@@ -166,8 +166,9 @@ function StudentsTable({
                  
                 sx={{ cursor: sortable ? 'pointer' : 'arrow'}}> 
                 
-                <Box sx={{display: 'flex', flexDirection: 'row', gap: '5px'}}>
+                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'start', flexWrap:'wrap', gap: '5px'}}>
                 <Box
+                  sx={{display: 'flex', flexWrap: 'nowrap'}}
                   onClick={sortable ? (e)=>{
                     let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
                     setSortRow({ i: i, isAsc: dir})
@@ -247,7 +248,7 @@ function StudentsTable({
 
 
 
-export const card = { 
+export let card = { 
     width: '100%', 
     border: '1px solid #1A2999',
     borderRight: 0,
@@ -261,18 +262,31 @@ const Spinner = ({spinner_path = '/nope'}) => {
     <img src={spinner_path}/> </Box>
 }
 
-export const Items = (items, setGroup) => {
-    console.log('items: ', items)
+// Firefox and Chrome capatible box-shadow
+// usage:  sx = { ...BoxShadow(shadow) }
+const BoxShadow = (shadow) => {return {
+  'box-shadow': shadow,                 
+  '-moz-box-shadow': shadow,            
+  '-webkit-box-shadow': shadow, 
+}}
+
+export const Items = (items, setGroup, cur_group) => {
+    console.log('----------cur_group: ', cur_group)
+    const is_current = (group) => group.id === cur_group.id
     const key_gen = (group) => `${group.id + 'pretty_ID' + items.length}`
     return (items.map((group) => {
+        // adding shadow if need
+
+        //if ( is_current(group) ) card={...card, ...BoxShadow('8px 5px 8px #463CCF')}  - buggy attempt to implement box-shadow in Chrome
+        
         return <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'start'}}>
-                <List style={{width: '100%'}}>
-                    <ListItemButton  sx={card} key={key_gen(group)} onClick={() => {console.log(' **** set group_id:', group.id); setGroup(group.id)}}>
+                <List style={{width: '93%', display: 'flex', justifyContent: 'center'}}>
+                    <ListItemButton  sx={{...card,'box-shadow': is_current(group) ? '8px 5px 8px #463CCF' : null}} key={key_gen(group)} onClick={() => {console.log(' **** set group_id:', group.id); setGroup(group.id)}}>
                         <ListItemAvatar key={key_gen(group)+'ava'}>
                            { <Groups sx={{color: '#07378F'}}/> }
                         </ListItemAvatar>
 
-                        <Typography key={key_gen(group)+'g_text'} style={{color: '#F6F7F6'}}>{group.name}</Typography>            
+                        <Typography noWrap={true} key={key_gen(group)+'g_text'} style={{color: is_current(group) ? '#463CCF' : '#F6F7F6'}}>{group.name}</Typography>            
                     </ListItemButton>
                 </List>
             </Box>} ))
@@ -280,8 +294,7 @@ export const Items = (items, setGroup) => {
     
 
 const GroupBar = (props) => {
-    //const key_gen = () => `${}`
-    const {groups, Paginator, setGroup} = props
+    const {groups, Paginator, setGroup, chosen} = props
 
     // gradient: https://cssgradient.io/
     // old color: linear-gradient(0deg, rgba(35,123,247,1) 42%, rgba(5,82,189,0.9654062308517157) 97%)
@@ -300,8 +313,8 @@ const GroupBar = (props) => {
             
             <Typography variant='h4' style={{color: '#F6F7F6'}}>Группы</Typography>
 
-            <Box sx={{'scrollbar-width': 'none', width: '90%', height: '80%', overflow: 'scroll' }}> 
-               { groups.length > 0 ? Items(groups, setGroup) : CircleDots } 
+            <Box className="noscroll" sx={{scrollbarWidth: 'none', msOverflowStyle: 'none', width: '95%', height: '80%', overflow: 'scroll'}}> 
+               { groups.length > 0 ? Items(groups, setGroup, chosen.group) : CircleDots } 
             </Box>
             {Paginator}
             
@@ -327,8 +340,8 @@ async function getProgressData(setData, args = {group:{id: 'no_id'}, quest:{id: 
 
 
 // 'calc(100% - 64px)' - bc height of <Head/> is 64px - known by expirements
-export const QuestsPage = () => {
-
+export const QuestsPage = (props) => {
+  console.log('questPage props:', props)
   const defaultPaginationParams = {
     params: {
       limit: 10,
@@ -387,7 +400,7 @@ export const QuestsPage = () => {
 
   // refreshing progress-table weather "chosens" are
   useEffect(() => {
-
+    setProgress([{}]) // triggering spinner to show 'loading...'
     console.log('===== chosens are: ', chosen)
     if (chosen.group && chosen.quest) {
       getProgressData(setProgress, chosen)
@@ -397,6 +410,7 @@ export const QuestsPage = () => {
 
   // refreshing list of Quests on a selected page 
   useEffect(()=>{
+    setProgress([{}]) // triggering spinner to show 'loading...'
     getQuestsData(setQuests, QuestParams)  
   }, [QuestParams])
 
@@ -450,10 +464,10 @@ export const QuestsPage = () => {
       onChange: (e, page) => setQuestParams({ ...QuestParams, params: {...QuestParams.params, page: page} })
     }
   
-  return <div style={{ height: '100%' }}>
+  return <div style={{ height: '100%', width: '100%' }}>
             <Head/> 
             <div style={{display: 'flex', justifyContent: 'start', alignItems: 'start'}}>
-            <GroupBar groups={Data} Paginator={Paginator} 
+            <GroupBar groups={Data} Paginator={Paginator} chosen={chosen}
                 setGroup={(id) => setChosen({...chosen, group: {...chosen.group, id: id }}) }/>
               
             <ColumnContainer style={{ width: '100%', alignItems: 'start', padding: '1rem'}}>

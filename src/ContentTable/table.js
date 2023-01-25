@@ -187,6 +187,7 @@ export const InteractiveTable = (props) => {
           </Typography>
           <Button 
            variant="contained" 
+           sx={{background: '#101d96'}}
            startIcon={<Iconify icon="eva:plus-fill" />}
            onClick={() => {
             setAddOpen(true); 

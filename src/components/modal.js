@@ -5,8 +5,7 @@ import Divider from '@mui/material/Divider';
 import { useState } from "react"
 
 import { Add, Del, Modify } from "../Utils/requests"
-
-
+ 
 
 const handleSubmit = (e) => {
   //refreshPage(500)
@@ -19,7 +18,7 @@ export const Modal = ({isOpen, setOpen, poles,
                        title = 'no title(', 
                        previousVal,
                        buttons = [['Ок', 'primary', () => setOpen(false)], 
-                                  ['Отмена', 'gray', () => setOpen(false)]] }) => {
+                                  ['Отмена', 'cancel', () => setOpen(false)]] }) => {
     
     const [Data, setData] = useState(hasReadyData ? poles.readyData : {})    // data for request
     
@@ -68,9 +67,10 @@ export const Modal = ({isOpen, setOpen, poles,
 
             <RowContainer style={{width: '100%', gap: '10px', justifyContent: 'end'}}>
               {buttons.map( ([name, color, onClick], i) => <Button variant='contained'
+                                                       color={color}
                                                        key={key_gen(i, name)+'btn'}
                                                        onClick={ (e) => {onClick(Data);}} 
-                                                       sx={{ borderRadius: '10px', background: color }}> 
+                                                       sx={{ borderRadius: '10px' }}> 
                                                 {name} </Button>)}
             </RowContainer>
 
@@ -85,7 +85,7 @@ export const Modal = ({isOpen, setOpen, poles,
 export const AddModal = ({ isOpen, setOpen, endpoint, poles, refreshData}) => {
   const buttons = [
     ['Создать', 'primary', async function(Data) {await Add(endpoint, Data); await refreshData(); setOpen(false)}], 
-    ['Отмена', 'gray', () => setOpen(false)]
+    ['Отмена', 'cancel', () => setOpen(false)]
   ]
 
   let isGroup = false
@@ -104,7 +104,7 @@ export const AddModal = ({ isOpen, setOpen, endpoint, poles, refreshData}) => {
 export const ModifyModal = ({isOpen, setOpen, endpoint, row, poles, refreshData}) => {
   const buttons = [
     ['Применить', 'primary', async function(Data) {await Modify(endpoint, Data, row.id); await refreshData(); setOpen(false)}], 
-    ['Отмена', 'gray', () => setOpen(false)]
+    ['Отмена', 'cancel', () => setOpen(false)]
   ]
 
   return <Modal isOpen = {isOpen} setOpen = {setOpen}          
@@ -118,8 +118,8 @@ export const ModifyModal = ({isOpen, setOpen, endpoint, row, poles, refreshData}
 
 export const DelModal = ({isOpen, setOpen, endpoint, row, poles, refreshData}) => {
   const buttons = [
-    ['Удалить', 'primary',  async function() { await Del(endpoint, row.id); await refreshData(); setOpen(false)}], 
-    ['Отмена', 'gray', () => setOpen(false)]]
+    ['Удалить', 'caution',  async function() { await Del(endpoint, row.id); await refreshData(); setOpen(false)}], 
+    ['Отмена', 'cancel', () => setOpen(false)]]
 
   return <Modal hasReadyData={false} isOpen = {isOpen} setOpen = {setOpen}
                 title={`Вы, действительно, хотите удалить ${row.name ? row.name : row.full_name}?`}

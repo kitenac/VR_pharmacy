@@ -1,21 +1,28 @@
 
 Tasks:
    
-1. group statistic, analysis - diagrams, ~ BI systems
-   - old TaskMap - can be used here
+1.  group statistic, analysis - diagrams, ~ BI systems
+    - old TaskMap - can be used here
 
-2. prettier form - like clerc ~ onRowClick - window with student`s progress
-3. search and sort everywhere
+2.  prettier form - like clerc ~ onRowClick - window with student`s progress
+2.5 fonts: maximmum 3 count fonts at one page
+3.  search and sort everywhere
 
-  0 LocalStotrage updates too much render fells - need to finish saving curr page
-  1 group page to cash
-  2 fixed size for columns everywhere to prevent jumping
-    overlow - hide, but show onHover!!!
+ 
  
 
- sort for quests: 
-  - solve bug with freezed TaskMap after filtering
-  - toggling and show up/down arrows 
+ theming: 
+  - by theme_from_git/typography create some fonts
+    * rermeber - max 3 fonts on a page!!!
+
+ pretify issue:
+  - try to implement box-shadow in Chrome 
+      * there some attempts in quest_page: <Items/>(start of map body) and <BoxShadow/>  
+ sort:
+  - just add arrows for groups
+  - add sort and search for GroupBar - by back - like in groups page
+
+
 
 * reflect change on-fly: long-pulling(pinging if change occured) + memoization(to prevent scrolling down after new data rendered up)
 

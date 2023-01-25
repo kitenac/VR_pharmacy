@@ -17,18 +17,23 @@ const GREY = {
 };
 
 const PRIMARY = {
-  lighter: '#D1E9FC',
+  main: '#101d96',
+  lighter: '#07378F',
+  darker: '#0b1573',
+
+  //lighter: '#D1E9FC',
   light: '#76B0F1',
-  main: '#2065D1',
+  //main: '#2065D1',
   dark: '#103996',
-  darker: '#061B64',
+  //darker: '#061B64',
   contrastText: '#fff',
 };
 
 const SECONDARY = {
   lighter: '#D6E4FF',
   light: '#84A9FF',
-  main: '#3366FF',
+  main: '#F6F7F6',
+  //main: '#3366FF',
   dark: '#1939B7',
   darker: '#091A7A',
   contrastText: '#fff',
@@ -70,6 +75,24 @@ const ERROR = {
   contrastText: '#fff',
 };
 
+const CAUTION = {
+  light: '#c70404',
+  lighter: '#d40404',
+  main: '#b30707',
+  darker: '#780202',
+  dark: '#910404',
+  contrastText: '#fff',
+}
+
+const CANCEL = {
+  main: '#808080',
+  lighter: 'green',
+  light: 'red',
+  darker: 'black',
+  dark: '#545353',
+  contrastText: GREY[800],
+}
+
 const palette = {
   common: { black: '#000', white: '#fff' },
   primary: PRIMARY,
@@ -80,6 +103,11 @@ const palette = {
   error: ERROR,
   grey: GREY,
   divider: alpha(GREY[500], 0.24),
+
+  // my colors:
+  cancel: CANCEL,
+  caution: CAUTION,
+
   text: {
     primary: GREY[800],
     secondary: GREY[600],
