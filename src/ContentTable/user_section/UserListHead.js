@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 // @mui
 import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@mui/material';
-
+import { ArrowDownward, ArrowUpward} from '@mui/icons-material';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 // ----------------------------------------------------------------------
 
 const visuallyHidden = {
@@ -46,18 +47,20 @@ export default function UserListHead({
           <TableCell
             key={id}
             align={alignRight ? 'right' : 'left'}
-            sortDirection={orderBy === id ? order : false}
           >
             <TableSortLabel
               hideSortIcon
-              active={orderBy === id}
-              direction={orderBy === id ? order : 'asc'}
               onClick={sortable ? createSortHandler(poleName) : null}
             >
               {colName} 
-              {orderBy === id ? (
-                <Box sx={{ ...visuallyHidden }}>{order === 'desc' ? 'sorted descending' : 'sorted ascending'}</Box>
-              ) : null}
+              <Box> 
+              {sortable ? order==='-created_at' ? 
+                <ImportExportIcon/> : 
+                order===poleName ? <ArrowUpward/> :
+                order==='-'+poleName ? <ArrowDownward/> : <ImportExportIcon/> 
+                : null} 
+              </Box>
+
             </TableSortLabel>
           </TableCell>
         ))}

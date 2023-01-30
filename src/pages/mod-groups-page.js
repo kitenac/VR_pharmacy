@@ -21,7 +21,7 @@ export const ModGroupsPage = () => {
     const columns = [
       {colName: '', poleName: '', sortable: false},
       {colName: 'Код группы', poleName: "name", sortable: true},
-      {colName: 'Число студентов', poleName: 'countStudents', sortable: false},
+      {colName: 'Число студентов', poleName: 'countStudents', sortable: true},
       {colName: 'Почта группы', poleName: 'email', sortable: true},
       {colName: '', poleName: '', sortable: false}]
 

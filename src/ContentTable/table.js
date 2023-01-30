@@ -205,7 +205,7 @@ export const InteractiveTable = (props) => {
             <TableContainer>
               <Table>
                 <UserListHead
-                  order={order}
+                  order={Params.params.order[0]}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={USERLIST.length}

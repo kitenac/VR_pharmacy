@@ -5,22 +5,8 @@ Tasks:
     - old TaskMap - can be used here
 
 2.  prettier form - like clerc ~ onRowClick - window with student`s progress
-2.5 fonts: maximmum 3 count fonts at one page
-3.  search and sort everywhere
 
  
- 
-
- theming: 
-  - by theme_from_git/typography create some fonts
-    * rermeber - max 3 fonts on a page!!!
-
- pretify issue:
-  - try to implement box-shadow in Chrome 
-      * there some attempts in quest_page: <Items/>(start of map body) and <BoxShadow/>  
- sort:
-  - just add arrows for groups
-  - add sort and search for GroupBar - by back - like in groups page
 
 
 

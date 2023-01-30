@@ -4,6 +4,7 @@ import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { Groups, ArrowDownward, ArrowUpward} from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
 import { Box, 
          Button,
          Table,
@@ -14,11 +15,10 @@ import { Box,
          TableRow, 
          TablePagination,
          Paper, 
-         Tab, Tabs, ListItemButton, Typography, Pagination, PaginationItem, Backdrop, CircularProgress, Popover, Input  } from '@mui/material'
+         Tab, Tabs, ListItemButton, Typography, Pagination, PaginationItem, Backdrop, CircularProgress, Popover, Input, TextField  } from '@mui/material'
 
 
 import { getProgress, getQuests, getGroups } from '../Utils/requests';
-import { alpha } from "@mui/material";
 import { Head } from '../components/head'
 import { TaskMap } from "../components/taskMap"
 import { MiniPaginator, RowContainer, ColumnContainer } from '../shitty-lib';
@@ -27,6 +27,7 @@ import { ScanningMan, Centrifuge, CircleDots } from "../Media";
 
 import { noScrollBar } from "../Utils/which_browser"
 import '../magic.css'
+import { ThemeProvider } from "../theme_from_git";
 
 export async function questsList(setData, Params) {
   const quests = await getQuests(Params)
@@ -68,9 +69,10 @@ const QuestBar = ({quests = [], setQuest, PagParams}) =>{
         {quests.length > 0 ? quests.map((el) => <Tab 
           key={key_gen(value, el.id)} 
           className='noscroll'
-          style={{height: '7vh', width: '35vh', overflow: 'elipsis', display: 'flex', justifyContent: 'start'}} 
+          style={{height: '7.5vh', width: '35vh', overflow: 'elipsis', display: 'flex', justifyContent: 'start'}} 
           label={ 
-            el.name
+            <Typography variant="subtitle"> {el.name} </Typography>
+            //el.name
           } 
           onClick={() => setQuest(el.id)} />) : null }
        </Tabs>
@@ -164,16 +166,17 @@ function StudentsTable({
               {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell 
                 key={key_gen(i, poleName)} 
                  
-                sx={{ cursor: sortable ? 'pointer' : 'arrow'}}> 
+                sx={{cursor: sortable ? 'pointer' : 'arrow'}}> 
                 
-                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'start', flexWrap:'wrap', gap: '5px'}}>
+                <Box sx={{minWidth: '1rem', maxWidth: '20rem', display: 'flex', flexDirection: 'row', justifyContent: 'start', flexWrap:'wrap', gap: '5px', flexGrow: 0}}>
                 <Box
                   sx={{display: 'flex', flexWrap: 'nowrap'}}
                   onClick={sortable ? (e)=>{
                     let dir = i !== sortRow.i ? true : (sortRow.isAsc !== null ? !sortRow.isAsc : true)
                     setSortRow({ i: i, isAsc: dir})
                     handleRequestSort(e, poleName, sortRow.isAsc, fraction) } : null}> 
-                  {colName}
+                  <Typography variant="subtitle" sx={{alignSelf: 'center'}}> {colName} </Typography>
+                  
                   {i === sortRow.i ? sortRow.isAsc ? <ArrowUpward/> : <ArrowDownward/> : sortable ? <ImportExportIcon/> : null} 
                 </Box>
                 
@@ -182,7 +185,8 @@ function StudentsTable({
                   <Input 
                     onChange={(e)=>handleRequestSort(e, poleName)}
                     placeholder='введите имя студента...'  
-                  /> : null
+                  />
+                 : null
                 }
                 </Box>
                 
@@ -229,14 +233,19 @@ function StudentsTable({
               
                 return <TableRow key={student_id}>
                   <TableCell align='right' sx={{width: '1rem'}}>
-                    <Typography variant="subtitle4" noWrap> 
+                    <Typography variant="content" noWrap> 
                       {`${idx+1}.`} 
                     </Typography>
                   </TableCell>
-                  {row.map((el, idx) => <TableCell key={`${student_id}_${idx}`}> {el} </TableCell>)}
+                  {row.map((el, idx) => <TableCell key={`${student_id}_${idx}`}> 
+                   <Typography variant="content"> {el} </Typography>  
+                  </TableCell>)}
                 </TableRow>
               }
-            ) : <Spinner spinner_path={Centrifuge}/>
+            ) : <TableRow>
+              <TableCell sx={{width: '1rem'}}> </TableCell>
+              <TableCell> <Spinner spinner_path={Centrifuge}/> </TableCell> 
+            </TableRow>
           }
 
           </TableBody>
@@ -256,10 +265,8 @@ export let card = {
     borderRadius: '5px', 
     bgcolor: 'rgba(0.15, 0.15, 0.15, 0.15)' }
 
-
 const Spinner = ({spinner_path = '/nope'}) => {
-  return <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}> 
-    <img src={spinner_path}/> </Box>
+  return <img src={spinner_path}/> 
 }
 
 // Firefox and Chrome capatible box-shadow
@@ -286,7 +293,11 @@ export const Items = (items, setGroup, cur_group) => {
                            { <Groups sx={{color: '#07378F'}}/> }
                         </ListItemAvatar>
 
-                        <Typography noWrap={true} key={key_gen(group)+'g_text'} style={{color: is_current(group) ? '#463CCF' : '#F6F7F6'}}>{group.name}</Typography>            
+                        <Typography noWrap={true} key={key_gen(group)+'g_text'} 
+                          style={{color: is_current(group) ? '#463CCF' : '#F6F7F6'}}
+                          variant='content'>
+                          {group.name}
+                        </Typography>            
                     </ListItemButton>
                 </List>
             </Box>} ))
@@ -294,12 +305,23 @@ export const Items = (items, setGroup, cur_group) => {
     
 
 const GroupBar = (props) => {
-    const {groups, Paginator, setGroup, chosen} = props
+    const {groups, Paginator, setGroup, chosen, Params, setParams, handleRequestSort} = props
+    const {data, meta} = groups
+
+    const handleFilterByName = (e) => {
+      setParams({
+        ...Params, 
+        search: e.target.value
+      })
+    };
 
     // gradient: https://cssgradient.io/
     // old color: linear-gradient(0deg, rgba(35,123,247,1) 42%, rgba(5,82,189,0.9654062308517157) 97%)
     // red-theme: linear-gradient(0deg, rgba(150,16,34,1) 63%, rgba(219,34,53,1) 97%)
     
+
+    console.log('&&&&& order: ', Params.params.order)
+
     return <ColumnContainer style={{  
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -311,10 +333,32 @@ const GroupBar = (props) => {
             paddingTop: '1rem'
             }}>
             
-            <Typography variant='h4' style={{color: '#F6F7F6'}}>Группы</Typography>
+            <Box>
+            <Box onClick={(e) => handleRequestSort(e, 'name')} sx={{display: 'flex', alignItems: 'start', justifyContent: 'center', cursor: 'pointer'}}>
+              { 
+                Params.params.order[0]==='-created_at' ? 
+                <ImportExportIcon sx={{ color: 'secondary.lighter'}}/> : 
+                Params.params.order[0][0]==='-' ? <ArrowDownward sx={{ color: 'secondary.lighter'}}/> : <ArrowUpward sx={{ color: 'secondary.lighter'}}/> 
+              } 
+              <Typography variant='title' style={{color: '#F6F7F6'}}>Группы</Typography>
+            </Box>
+
+            <Box sx={{ ...card, display: 'flex', alignItems: 'center', padding: '4px', marginTop: '0.5rem'}}>
+              <SearchIcon sx={{ color: 'secondary.lighter'}}/>
+              <Input 
+                disableUnderline
+                onChange={(e)=>handleFilterByName(e)}
+                placeholder='поиск по коду группы...'
+                sx={{color: 'secondary.main', paddingLeft: '4px'}}  
+              />
+            </Box>
+            </Box>
+
 
             <Box className="noscroll" sx={{scrollbarWidth: 'none', msOverflowStyle: 'none', width: '95%', height: '80%', overflow: 'scroll'}}> 
-               { groups.length > 0 ? Items(groups, setGroup, chosen.group) : CircleDots } 
+               { Object.keys(meta).length > 0 && chosen.group ? 
+                  data.length > 0 ? Items(data, setGroup, chosen.group) : null 
+                 : CircleDots } 
             </Box>
             {Paginator}
             
@@ -346,11 +390,11 @@ export const QuestsPage = (props) => {
     params: {
       limit: 10,
       page: 1,
-      order: ['-id']},
+      order: ['-created_at']},
     search: '', 
   }
 
-  // params for pagination in /groups/search
+  // params for pagination in /groups/search''
   const [Params, setParams] = useState({})
 
   // same for /quests/search
@@ -372,7 +416,7 @@ export const QuestsPage = (props) => {
   const isEmtyObj = (obj) => Object.keys(obj).length === 0
 
   // same for group`s list
-  const setParamsCashed = (val) => localStorage.setItem("groups", JSON.stringify(val))
+  const setParamsCashed = (Params) => localStorage.setItem("groups", JSON.stringify({search: '', params: {...Params.params, order: defaultPaginationParams.params.order}})) // vanishing search and order - to clear past search and sort requests after refreshing
   const getParamsCashed = () => JSON.parse(localStorage.getItem("groups")) 
   const cashedParams = getParamsCashed()
 
@@ -384,7 +428,7 @@ export const QuestsPage = (props) => {
   }
   
   if (isEmtyObj(Params)){
-    cashedParams ? setParams(cashedParams) :
+    cashedParams ? setParams(cashedParams):
     setParams({
       ...defaultPaginationParams,
       params: {...defaultPaginationParams.params, order: ["-created_at"]}}) 
@@ -438,6 +482,15 @@ export const QuestsPage = (props) => {
     })
   }
 
+  const handleRequestSort = (event, poleName) => {
+    const order = [Params.params.order[0][0]==='-' ? poleName : '-'+poleName]
+
+    setParams({...Params, params: {
+      limit: 10,
+      page: 1,
+      order: order},
+    })
+  };
 
   console.log('params now: ', Params, isEmtyObj(Params))
 
@@ -467,8 +520,9 @@ export const QuestsPage = (props) => {
   return <div style={{ height: '100%', width: '100%' }}>
             <Head/> 
             <div style={{display: 'flex', justifyContent: 'start', alignItems: 'start'}}>
-            <GroupBar groups={Data} Paginator={Paginator} chosen={chosen}
-                setGroup={(id) => setChosen({...chosen, group: {...chosen.group, id: id }}) }/>
+            <GroupBar groups={groups} Paginator={Paginator} Params={Params} setParams={setParams} chosen={chosen}
+              setGroup={(id) => setChosen({...chosen, group: {...chosen.group, id: id }}) }
+              handleRequestSort={handleRequestSort}/>
               
             <ColumnContainer style={{ width: '100%', alignItems: 'start', padding: '1rem'}}>
                 <QuestBar quests={quests.data} PagParams={questPagParam} 

@@ -1,9 +1,11 @@
 // ----------------------------------------------------------------------
 
+
 export function remToPx(value) {
   return Math.round(parseFloat(value) * 16);
 }
 
+// mui requires rems for textSize - so here goes converter:
 export function pxToRem(value) {
   return `${value / 16}rem`;
 }
@@ -32,6 +34,42 @@ const typography = {
   fontWeightRegular: 400,
   fontWeightMedium: 600,
   fontWeightBold: 700,
+  
+
+  /*
+    fontSheme for questPage: 
+    1 content, 2 subtitle, 3 title
+
+    Head: Logo(3), pages(2);
+    GroupBar: Title(3), groups(1), paginator(1),
+    Table:  Bar(2), Head(2), search(1), Row(1)  
+  */
+
+  title:{
+    fontWeight: 700,
+    lineHeight: 28 / 18,
+    fontSize: pxToRem(17)
+  },
+
+  subtitle: {
+    fontWeight: 600,
+    lineHeight: 1.05,
+    fontSize: pxToRem(14),
+  },
+
+  content: {
+    fontWeight: 400,
+    lineHeight: 1.5,
+    fontSize: pxToRem(14),
+  },
+
+  // body1 - default style for every component, i.e. <input/> which can access theme only by themeProvider  
+  body1: {
+    fontWeight: 400,
+    lineHeight: 1.5,
+    fontSize: pxToRem(14),
+  },
+
   h1: {
     fontWeight: 800,
     lineHeight: 80 / 64,
@@ -77,10 +115,6 @@ const typography = {
     fontWeight: 600,
     lineHeight: 22 / 14,
     fontSize: pxToRem(14),
-  },
-  body1: {
-    lineHeight: 1.5,
-    fontSize: pxToRem(16),
   },
   body2: {
     lineHeight: 22 / 14,

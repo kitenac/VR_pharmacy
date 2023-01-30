@@ -40,7 +40,7 @@ export const Head = () => {
              onClick={()=>redirect('/')} />
         
           <Typography
-            variant="h6"
+            variant="title"
             noWrap
             component="a"
             onClick={()=>redirect('/')}
@@ -62,7 +62,7 @@ export const Head = () => {
               {pages.map(([page, link]) => (
                 <MenuItem key={page} >
                   <Link onClick={() => redirect(link)} color='inherit' underline='none'>
-                    <Typography textAlign="center"> {page}</Typography>
+                    <Typography textAlign="center" variant='content'> {page}</Typography>
                   </Link>
                 </MenuItem>
               ))}

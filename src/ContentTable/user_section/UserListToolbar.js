@@ -40,19 +40,8 @@ UserListToolbar.propTypes = {
 
 export default function UserListToolbar({ numSelected, filterName, onFilterName }) {
   return (
-    <StyledRoot
-      sx={{
-        ...(numSelected > 0 && {
-          color: 'primary.main',
-          bgcolor: 'primary.lighter',
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography component="div" variant="subtitle1">
-          {numSelected} выбрано
-        </Typography>
-      ) : (
+    <StyledRoot>
+     
         <StyledSearch
           value={filterName}
           onChange={onFilterName}
@@ -63,17 +52,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
             </InputAdornment>
           }
         />
-      )}
-
-      {numSelected > 0 ? 
-        <Tooltip title="Delete">
-          <IconButton>
-            <Iconify icon="eva:trash-2-fill" />
-          </IconButton>
-        </Tooltip>
-       : 
-       null}
-      
+       
     </StyledRoot>
   );
 }
