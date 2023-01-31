@@ -10,7 +10,7 @@ import {getGroups} from '../Utils/requests'
 export async function getData(setData, Params) {
   const groups = await getGroups(Params)
   
-  groups.data.map((group) => {return group.countStudents = group.students.length})
+  //groups.data.map((group) => {return group.students_count = group.students.length})
   setData(groups)
 }
 
@@ -21,14 +21,20 @@ export const ModGroupsPage = () => {
     const columns = [
       {colName: '', poleName: '', sortable: false},
       {colName: 'Код группы', poleName: "name", sortable: true},
-      {colName: 'Число студентов', poleName: 'countStudents', sortable: true},
+      {colName: 'Число студентов', poleName: 'students_count', sortable: true},
       {colName: 'Почта группы', poleName: 'email', sortable: true},
       {colName: '', poleName: '', sortable: false}]
 
     const poles={
-      to_fill: [{
+      to_fill: [
+      {
         name: 'name', 
-        placeholder: 'Название группы'}],
+        placeholder: 'Название группы'},
+      {
+        name: 'email',
+        placeholder: 'Почта группы'
+      }   
+      ],
       
       readyData: {}
     }

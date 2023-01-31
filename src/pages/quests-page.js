@@ -23,10 +23,11 @@ import { Head } from '../components/head'
 import { TaskMap } from "../components/taskMap"
 import { MiniPaginator, RowContainer, ColumnContainer } from '../shitty-lib';
 
-import { ScanningMan, Centrifuge, CircleDots } from "../Media";
+import { ScanningMan, Centrifuge, CircleDots, SpinnerWorm } from "../Media";
 
 import { noScrollBar } from "../Utils/which_browser"
 import '../magic.css'
+import '../Media/spinner-worm.css'
 import { ThemeProvider } from "../theme_from_git";
 
 export async function questsList(setData, Params) {
@@ -145,11 +146,11 @@ function StudentsTable({
 
   const columns = [
     {colName: '', poleName: ""}, 
-    {colName: 'ФИО', poleName: "student_full_name", sortable: true, isAsc: true},
-    {colName: 'Процент выполнения', fraction: ["quest_true_answer_count", "quest_total_tasks_count"], sortable: true, isAsc: true},
-    {colName: 'Обзор подзадач', poleName: "task_map", sortable: false},
-    {colName: 'Время начала', poleName: "quest_start_at", sortable: true, isAsc: true},
-    {colName: 'Время завершения', poleName: "quest_end_at", sortable: true, isAsc: true},
+    {colName: 'ФИО', poleName: "student_full_name", width: '20rem', sortable: true, isAsc: true},
+    {colName: 'Процент выполнения', width: '15rem', fraction: ["quest_true_answer_count", "quest_total_tasks_count"], sortable: true, isAsc: true},
+    {colName: 'Обзор подзадач', poleName: "task_map", width: '25rem', sortable: false},
+    {colName: 'Время начала', poleName: "quest_start_at", width: '10rem', sortable: true, isAsc: true},
+    {colName: 'Время завершения', poleName: "quest_end_at", width: '10rem', sortable: true, isAsc: true},
     ]
   
 
@@ -163,10 +164,14 @@ function StudentsTable({
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {columns.map(({colName, poleName, sortable, fraction}, i) => <TableCell 
+              {columns.map(({colName, poleName, sortable, fraction, width}, i) => <TableCell 
                 key={key_gen(i, poleName)} 
                  
-                sx={{cursor: sortable ? 'pointer' : 'arrow'}}> 
+                sx={{
+                  cursor: sortable ? 'pointer' : 'arrow',
+                  width: width
+                }}
+                > 
                 
                 <Box sx={{minWidth: '1rem', maxWidth: '20rem', display: 'flex', flexDirection: 'row', justifyContent: 'start', flexWrap:'wrap', gap: '5px', flexGrow: 0}}>
                 <Box
@@ -244,12 +249,15 @@ function StudentsTable({
               }
             ) : <TableRow>
               <TableCell sx={{width: '1rem'}}> </TableCell>
-              <TableCell> <Spinner spinner_path={Centrifuge}/> </TableCell> 
+              <TableCell> </TableCell> 
             </TableRow>
           }
-
           </TableBody>
         </Table>
+        { progress[0] && Object.keys(progress[0]).length === 0 ? 
+          <Box sx={{display: 'flex', height: '50vh', alignItems: 'center', justifyContent: 'center'}}> 
+            {SpinnerWorm} 
+          </Box> : null}
       </TableContainer>
     );
 
@@ -266,7 +274,7 @@ export let card = {
     bgcolor: 'rgba(0.15, 0.15, 0.15, 0.15)' }
 
 const Spinner = ({spinner_path = '/nope'}) => {
-  return <img src={spinner_path}/> 
+  return <div className="loaderWorm"/> 
 }
 
 // Firefox and Chrome capatible box-shadow

@@ -8,8 +8,6 @@ Tasks:
 
  
 
-
-
 * reflect change on-fly: long-pulling(pinging if change occured) + memoization(to prevent scrolling down after new data rendered up)
 
 

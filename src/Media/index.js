@@ -6,5 +6,6 @@ import './Spinner.css'
 
 
 // CircleDots - already el - not path!
-const CircleDots = <div class="loader"/>
-export { VR, Inventarization, ScanningMan, Centrifuge, CircleDots }
+const CircleDots = <div className="loader"/>
+const SpinnerWorm = <div className="loaderWorm"/>
+export { VR, Inventarization, ScanningMan, Centrifuge, CircleDots, SpinnerWorm }

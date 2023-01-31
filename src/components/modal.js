@@ -16,14 +16,14 @@ const handleSubmit = (e) => {
 export const Modal = ({isOpen, setOpen, poles,
                        hasReadyData=true, 
                        title = 'no title(', 
-                       previousVal,
+                       previousVal={},
                        buttons = [['Ок', 'primary', () => setOpen(false)], 
                                   ['Отмена', 'cancel', () => setOpen(false)]] }) => {
     
     const [Data, setData] = useState(hasReadyData ? poles.readyData : {})    // data for request
     
     const key_gen = (i, name) => `${name + 'modal' + i}`
-    
+    console.log('@@@@@@@@ previous value: ', previousVal)
     return <Popover
         open={Boolean(isOpen)}
         anchorEl={isOpen}
@@ -53,9 +53,9 @@ export const Modal = ({isOpen, setOpen, poles,
             <Divider variant="middle" sx={{marginBottom: '3rem'}}/>
             {hasReadyData ? 
               poles.to_fill.map((pole, i) => {
-                return  <TextField label={previousVal ?  previousVal : pole.placeholder}
+                return  <TextField label={pole.placeholder}
                 key={key_gen(i, pole.placeholder)}
-                value={Data[pole.name] ? Data[pole.name] : previousVal}
+                value={Data[pole.name] ? Data[pole.name] : previousVal[pole.name]}
                 variant="outlined"
                 onChange={(e) => {
                   e.preventDefault()
@@ -107,9 +107,10 @@ export const ModifyModal = ({isOpen, setOpen, endpoint, row, poles, refreshData}
     ['Отмена', 'cancel', () => setOpen(false)]
   ]
 
+  // previousVal = {row.name ? row.name : row.full_name}
   return <Modal isOpen = {isOpen} setOpen = {setOpen}          
                 title={`Редактирование`}
-                previousVal = {row.name ? row.name : row.full_name}
+                previousVal = {row}
                 poles={poles}
                 buttons = { buttons }
           />
