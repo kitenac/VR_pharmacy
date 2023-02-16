@@ -1,4 +1,3 @@
-src_ex, public_ex - original(uncut) versions
 PM - yarn
 
 ## License
