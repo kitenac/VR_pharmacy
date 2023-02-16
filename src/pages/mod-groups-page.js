@@ -1,8 +1,11 @@
+import { Box, Paper } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 import { Head } from '../components/head';
 import { InteractiveTable } from '../ContentTable/table';
 import {getGroups} from '../Utils/requests' 
+
+import { ChartsBar } from '../components/chartsBar';
 
 
 
@@ -39,11 +42,23 @@ export const ModGroupsPage = () => {
       readyData: {}
     }
 
+
+
+
     return <div>
                <Head/>
-               <InteractiveTable tableName='Группы' endpoint='groups' columns={columns} poles={poles}
-                                 getData={(setData, params) => getData(setData, params)}
-                                 />
+               <Box style={{ display: 'flex', justifyContent: 'space-evenly', paddingLeft: '5rem', paddingRight: '5rem'}}>
+                <InteractiveTable tableName='Группы' endpoint='groups' columns={columns} poles={poles}
+                  style={{width: '55%'}}  
+                  getData={(setData, params) => getData(setData, params)}
+                />
+
+                <ChartsBar/>                
+
+               </Box>
+               
+
+
            </div>
     
 

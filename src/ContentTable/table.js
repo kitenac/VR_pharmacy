@@ -84,7 +84,7 @@ export const InteractiveTable = (props) => {
   const [data, setData] = useState({data: {}, meta: {}})     // data - table data, meta - pagination and other stuff data
   const {data: Data, meta: Meta} = data
 
-  const {tableName, columns, getData, endpoint, poles, blockGo, AddToHead} = props
+  const {tableName, columns, getData, endpoint, poles, blockGo, AddToHead, style} = props
 
   const refreshData = () => getData(setData, Params)
 
@@ -178,8 +178,8 @@ export const InteractiveTable = (props) => {
   let noData = Object.keys(Meta).length === 0
 
   return (
-    <div>
-      <Container style={{ width: '60%', marginTop: '1rem' }}>
+    <div style={{margin: 0, padding: 0, ...style}}>
+      <Container style={{ margin: 0, padding: 0 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           {AddToHead}
           <Typography variant="h3" gutterBottom>
@@ -203,7 +203,7 @@ export const InteractiveTable = (props) => {
 
           
             <TableContainer>
-              <Table>
+              <Table stickyHeader>
                 <UserListHead
                   order={Params.params.order[0]}
                   orderBy={orderBy}

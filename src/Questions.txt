@@ -7,6 +7,27 @@ Tasks:
 2.  prettier form - like clerc ~ onRowClick - window with student`s progress
 
  
+======== BI =================
+
+Plan:
+  look in sheet from tumbo4ka
+
+Simple: perfect documentation with possibility to run/modify code
+ | react chartjs | - https://react-chartjs-2.js.org/examples
+ | chartjs | - https://www.chartjs.org/docs/latest/charts/bar.html
+
+
+Hard: but has all imaginable charts(even bubles)
+ | D3.js | 
+ LibWiki: https://github.com/d3/d3/wiki
+  Tutorials: https://github.com/d3/d3/wiki/Tutorials
+  Examples: https://observablehq.com/@d3/gallery
+ 
+    Buble chart: https://observablehq.com/@d3/bubble-chart 
+    Bar chart: https://observablehq.com/@d3/stacked-bar-chart
+    Pie: https://observablehq.com/@d3/pie-chart
+
+
 
 * reflect change on-fly: long-pulling(pinging if change occured) + memoization(to prevent scrolling down after new data rendered up)
 

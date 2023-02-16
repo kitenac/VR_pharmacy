@@ -44,10 +44,13 @@ export const ModStudentsPage = (props) => {
 
     return <div>
                <Head/>
-               <InteractiveTable tableName={'Студенты ' + row.name} blockGo={true} AddToHead={goBack}
-                 endpoint='students' columns={columns} poles={poles}
-                 getData={(setData, params) => getData(setData, params, groupID)} 
-               />
+               <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                <InteractiveTable tableName={'Студенты ' + row.name} blockGo={true} AddToHead={goBack}
+                  style={{width: '50%'}}
+                  endpoint='students' columns={columns} poles={poles}
+                  getData={(setData, params) => getData(setData, params, groupID)} 
+                />
+               </Box>
            </div>
     
 
